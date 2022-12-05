@@ -1,15 +1,13 @@
-with open('inputs/input_5_steps.txt', 'r') as input:
-    steps = [line.strip() for line in input.readlines()]
-    
-with open('inputs/input_5_start.txt', 'r') as input:
-    start = input.readlines()
-    
-    
+with open('inputs/input_5_pure.txt', 'r') as input:
+    all_lines = input.readlines()
+    steps = [line.strip() for line in all_lines if 'from' in line]
+    start = [line for line in all_lines if '[' in line]
+
 def parse_start(start):  # Convert AoC's mess of formatting to lists with index zero at the bottom of the stack
     output = [[] for _ in range(9)]
-    start_ = list(reversed(start[:-1]))  # start_ used to preserve original start
+    start_ = list(reversed(start))  # start_ used to preserve original start
     for line in start_:
-        for i, index in enumerate(range(1, 36, 4)):
+        for i, index in enumerate(range(1, len(line), 4)):
             if line[index] != ' ':
                 output[i].append(line[index])
     return output
