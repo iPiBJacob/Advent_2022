@@ -1,29 +1,5 @@
-#===============================================================================
-# with open('input_1-1.txt', 'r') as input_file:
-#     lines = input_file.readlines()
-#
-# lines = [line.strip() for line in lines]
-#
-# elves = []
-# index = 0
-# for line in lines:
-#     if len(elves) == index:
-#         elves.append(0)
-#     if line == '':
-#         index += 1
-#         continue
-#     else:
-#         elves[index] += int(line)
-#
-# print(max(elves))
-# elves = sorted(elves)
-# print(sum(elves[-3:]))
-#===============================================================================
-
-with open('input_1-1.txt', 'r') as input_file:
-    lines = input_file.readlines()
-
-lines = [line.strip() for line in lines]
+with open('inputs/input_1-1.txt', 'r') as input_file:
+    lines = [line.strip() for line in input_file.readlines()]
 
 elves = [0]
 for line in lines:
@@ -32,6 +8,5 @@ for line in lines:
     else:
         elves[-1] += int(line)
 
-print(max(elves))
-elves = sorted(elves)
-print(sum(elves[-3:]))
+print(f'part 1 : {max(elves)}')
+print(f'part 2 : {sum(sorted(elves)[-3:])}')
