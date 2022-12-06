@@ -1,43 +1,16 @@
-with open('input_2.txt', 'r') as input:
-    lines = input.readlines()
-    
-lines = [line.strip() for line in lines]
+with open('inputs/input_2.txt', 'r') as input:
+    guide = [line.strip().split() for line in input.readlines()]
 
-guide = [line.split() for line in lines]
-
-inputs = [match[0] for match in guide]
-outputs = [match[1] for match in guide]
-
-winning_plays = {'A': 'Y', 'B': 'Z', 'C': 'X'}
-ties = {'A': 'X', 'B': 'Y', 'C': 'Z'}
-losing_plays = {'A': 'Z', 'B': 'X', 'C': 'Y'}
-strategy = {'X': losing_plays, 'Y': ties, 'Z': winning_plays}
-choice_scores = {'X': 1, 'Y': 2, 'Z': 3}
-
-score = 0
-for input, output in zip(inputs, outputs):
-    score += choice_scores[output]
-    
-    if winning_plays[input] == output:
-        score += 6
-    elif ties[input] == output:
-        score += 3
-        
-print(f'part 1 : {score}')
+inputs, outputs = ([match[0] for match in guide], [match[1] for match in guide])
+winning_plays, ties, losing_plays = ({'A': 'Y', 'B': 'Z', 'C': 'X'}, {'A': 'X', 'B': 'Y', 'C': 'Z'}, {'A': 'Z', 'B': 'X', 'C': 'Y'})
+win_loss_matrix = {'A': {'X': 4, 'Y': 8, 'Z': 3}, 'B': {'X': 1, 'Y': 5, 'Z': 9}, 'C': {'X': 7, 'Y': 2, 'Z': 6}}
 
 
-counts = {'X': 0, 'Y': 0, 'Z': 0}
+def score_attempt(inputs, outputs, strategy=None):
+    if strategy:
+        return sum(win_loss_matrix[input][strategy[output][input]] for input, output in zip(inputs, outputs))
+    return sum([win_loss_matrix[input][output] for input, output in zip(inputs, outputs)])
 
-score = 0
-for input, output in zip(inputs, outputs):
-    counts[output] += 1
-    choice = strategy[output][input]
-    
-    score += choice_scores[choice]
-    
-    if winning_plays[input] == choice:
-        score += 6
-    elif ties[input] == choice:
-        score += 3
 
-print(f'part 2 : {score}')
+print(f"part 1 : {score_attempt(inputs, outputs)}")
+print(f"part 2 : {score_attempt(inputs, outputs, strategy={'X': losing_plays, 'Y': ties, 'Z': winning_plays})}")
