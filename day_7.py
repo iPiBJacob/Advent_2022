@@ -13,12 +13,11 @@ class Directory:
         self.name = name
 
     def size(self):
-        print(self.files)
-        print(self.files.items())
         file_sizes = [file.size for file in self.files.values()]
         directory_sizes = [directory.size() for directory in self.directories.values()]
 
         return sum(file_sizes) + sum(directory_sizes)
+
 
 File = namedtuple('File', ['name', 'size'])
 
@@ -38,11 +37,32 @@ def cd(current_dir, target):
         current_dir = current_dir.directories[target]
     return current_dir
 
+def sum_small_folders(top_dir, cutoff):
+    sum = 0
+    if top_dir.size() <= cutoff:
+        sum = top_dir.size()
+    for dir in top_dir.directories.values():
+        sum += sum_small_folders(dir, cutoff)
+    return sum
+
+def find_smallest_deletable(top_dir, total_space, needed_space):
+    min_size = needed_space - (total_space - root.size())
+    if top_dir.size() < min_size:
+        return None
+    best_dir = top_dir
+    for dir in top_dir.directories.values():
+        print(f'best_dir: {best_dir.size()}, dir: {dir.size()}, needed: {min_size}')
+        if dir.size() >= min_size:
+            sub_dir = find_smallest_deletable(dir, total_space, needed_space)
+            if sub_dir.size() < best_dir.size():
+                best_dir = sub_dir
+    return best_dir
+
 
 root = Directory(None, '/')
 current_dir = root
 
-for line in lines:
+for line in lines:  # Build directory
     line = line.split()
     if line[0] == '$':
         if line[1] == 'cd':
@@ -54,5 +74,5 @@ for line in lines:
     else:
         current_dir.files[line[1]] = File(name=line[1], size=int(line[0]))
 
-print(root.size())
-
+print(f'part 1 : {sum_small_folders(root, 100000)}')
+print(f'part 2 : {find_smallest_deletable(root, 70000000, 30000000).size()}')
