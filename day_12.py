@@ -6,7 +6,6 @@ with open('inputs/input_12.txt', 'r') as input_file:
 
 UDLR = [np.array([-1, 0]), np.array([1, 0]), np.array([0, -1]), np.array([0, 1])]
 
-
 def check_partners(grid, yx_tup):
     accessible = []
     for dir in UDLR:
@@ -16,12 +15,6 @@ def check_partners(grid, yx_tup):
                 accessible.append(tuple(np.array(yx_tup) + dir))
         except:  pass  # If trying to go off the grid
     return accessible
-
-
-def add_edges(graph, grid):
-    for node in graph.nodes():
-        [graph.add_edge(node, partner) for partner in check_partners(grid, node) if partner in graph.nodes()]
-
 
 grid = None  # Build grid into a numpy array
 for line in lines:
@@ -34,8 +27,15 @@ grid[end] = 'z'
 
 graph = nx.DiGraph()
 graph.add_nodes_from([(y, x) for x in range(grid.shape[1]) for y in range(grid.shape[0])])
+for node in graph.nodes():
+    [graph.add_edge(node, partner) for partner in check_partners(grid, node) if partner in graph.nodes()]
+    
+all_paths = {}
+for node in graph.nodes():
+    if grid[node] == 'a':
+        try:
+            all_paths[node] = nx.shortest_path(graph, node, end)
+        except: pass  # Some paths are not possible
 
-print(graph)
-add_edges(graph, grid)
-short_path = nx.shortest_path(graph, start, end)
-print(short_path)
+print(f'part 1 : {len(nx.shortest_path(graph, start, end))-1}')
+print(f'part 2 : {min([len(path)-1 for path in all_paths.values()])}')
